@@ -19,7 +19,8 @@ public class Vigenere_GUI {
 		public static String encode(String openText, String key) {
 			String encoded = "";
 			int keysize = key.length();
-			int keyIndex = 0;
+			key = deSymbolizeKey(key);
+			key = key.toUpperCase();
 			for (int i = 0; i < openText.length(); i++) {
 				char cp = openText.charAt(i);
 				int index = getIndexByRange(cp);
@@ -28,11 +29,9 @@ public class Vigenere_GUI {
 					continue;
 				}
 				int num = cp - index;
-				char keyChar = key.charAt(keyIndex);
-				int keyNum = getNumVal(keyChar);
+				int keyNum = key.charAt(i % keysize) - 'A';
 				num = (num + keyNum) % 26;
 				encoded += (char) (num + index);
-				keyIndex = (keyIndex + 1) % keysize;
 			}
 			return encoded;
 		}
@@ -40,7 +39,8 @@ public class Vigenere_GUI {
 		public static String decode(String encodedText, String key) {
 			String decoded = "";
 			int keysize = key.length();
-			int keyIndex = 0;
+			key = deSymbolizeKey(key);
+			key = key.toUpperCase();
 			for (int i = 0; i < encodedText.length(); i++) {
 				char cp = encodedText.charAt(i);
 				int index = getIndexByRange(cp);
@@ -49,29 +49,36 @@ public class Vigenere_GUI {
 					continue;
 				}
 				int num = cp - index;
-				char keyChar = key.charAt(keyIndex);
-				int keyNum = getNumVal(keyChar);
+				int keyNum = key.charAt(i % keysize) - 'A';
 				num = (26 + num - keyNum) % 26;
 				decoded += (char) (num + index);
-				keyIndex = (keyIndex + 1) % keysize;
 			}
 			return decoded;
 		}
 		
 		private static int getIndexByRange(char cp) {
 			if (cp >= 'a' && cp <= 'z') {
-				return 97;
+				return 'a';
 			} else if (cp >= 'A' && cp <= 'Z') {
-				return 65;
+				return 'A';
 			} else {
 				return 0;
 			}
 		}
 		
-		private static int getNumVal(char cp) {
-			return cp - getIndexByRange(cp);
+		private static String deSymbolizeKey(String key) {
+			String deSymbolizedKey = "";
+			for (int i = 0; i < key.length(); i++) {
+				char tempChar = key.charAt(i);
+				if ((tempChar >= 'A' && tempChar <= 'Z')
+						|| (tempChar >= 'a' && tempChar <= 'z')) {
+					deSymbolizedKey += tempChar;
+				} else {
+					deSymbolizedKey += 'A';
+				}
+			}
+			return deSymbolizedKey;
 		}
-		
 	}
 	
 	public static class Vigenere_G extends JFrame implements ActionListener {
